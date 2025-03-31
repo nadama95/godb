@@ -92,14 +92,14 @@ func (ss *selectStatement) Offset(offset int) *selectStatement {
 
 // Execution Functions
 func (ss *selectStatement) buildQuery() string {
-	colStr := strings.Join(ss.columns, ", ")
+	colStr := strings.Join(ss.columns, ",\n\t")
 	q := fmt.Sprintf("SELECT %s\n", colStr)
 
 	tableStr := strings.Join(ss.fromTables, ", ")
 	q += fmt.Sprintf("FROM %s\n", tableStr)
 
 	for _, j := range ss.joins {
-		q += fmt.Sprintf("%s %s ON %s.%s = %s.%s\n", j.JoinType.String(), j.tableName, j.tableName, j.localOn, j.remoteOn, ss.fromTables[0])
+		q += fmt.Sprintf("%s %s ON %s.%s = %s.%s\n", j.JoinType.String(), j.tableName, j.tableName, j.localOn, ss.fromTables[0], j.remoteOn)
 	}
 
 	if ss.limit != 0 {
