@@ -94,6 +94,8 @@ func reflectStruct(structType reflect.Type, values [][]interface{}) reflect.Valu
 					if v, ok := val.(bool); ok {
 						fieldValue.SetBool(v)
 					}
+				default:
+					log.Println("field value type not supported ", fieldValue.Kind())
 				}
 
 			}
