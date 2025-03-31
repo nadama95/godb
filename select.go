@@ -3,6 +3,7 @@ package godb
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -108,6 +109,8 @@ func (ss *selectStatement) buildQuery() string {
 	if ss.offset != 0 {
 		q += fmt.Sprintf("OFFSET %v\n", ss.offset)
 	}
+
+	log.Println(q)
 
 	return q
 }
