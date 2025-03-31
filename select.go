@@ -98,7 +98,7 @@ func (ss *selectStatement) buildQuery() string {
 	q += fmt.Sprintf("FROM %s\n", tableStr)
 
 	for _, j := range ss.joins {
-		q += fmt.Sprintf("%s %s ON %s = %s\n", j.JoinType.String(), j.tableName, j.localOn, j.remoteOn)
+		q += fmt.Sprintf("%s %s ON %s.%s = %s.%s\n", j.JoinType.String(), j.tableName, j.tableName, j.localOn, j.remoteOn, ss.fromTables[0])
 	}
 
 	if ss.limit != 0 {
