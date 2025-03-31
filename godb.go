@@ -28,6 +28,13 @@ func Open(adapter adapters.Adapter, dataSourceName string) (*DB, error) {
 	return initalize(adapter, db), nil
 }
 
+func (db *DB) Ping() bool {
+	err := db.sql.Ping()
+
+	return err == nil
+
+}
+
 func (db *DB) Close() error {
 	return db.sql.Close()
 }
