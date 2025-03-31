@@ -3,7 +3,6 @@ package godb
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"strings"
 )
 
@@ -108,8 +107,10 @@ func (ss *selectStatement) buildQuery() string {
 		q += fmt.Sprintf("%s %s ON %s.%s = %s.%s\n", j.JoinType.String(), j.tableName, j.tableName, j.localOn, ss.fromTables[0], j.remoteOn)
 	}
 
-	orderStr := strings.Join(ss.orderBy, ",\n")
-	q += fmt.Sprintf("ORDER BY %s\n", orderStr)
+	if len(ss.orderBy) > 0 {
+		orderStr := strings.Join(ss.orderBy, ",\n")
+		q += fmt.Sprintf("ORDER BY %s\n", orderStr)
+	}
 
 	if ss.limit != 0 {
 		q += fmt.Sprintf("LIMIT %v\n", ss.limit)
@@ -118,8 +119,6 @@ func (ss *selectStatement) buildQuery() string {
 	if ss.offset != 0 {
 		q += fmt.Sprintf("OFFSET %v\n", ss.offset)
 	}
-
-	log.Println(q)
 
 	return q
 }
