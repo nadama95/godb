@@ -11,8 +11,16 @@ type selectStatement struct {
 
 	columns    []string
 	fromTables []string
+	joins      []Join
 	limit      int
 	offset     int
+}
+
+type Join struct {
+	JoinType
+	tableName string
+	localOn   string
+	remoteOn  string
 }
 
 func (ss *selectStatement) DB() *sql.DB {
@@ -37,6 +45,40 @@ func (ss *selectStatement) Columns(columns ...string) *selectStatement {
 	return ss
 }
 
+type JoinType int
+
+const (
+	InnerJoin JoinType = iota
+	LeftJoin
+	RightJoin
+	OuterJoin
+)
+
+func (j JoinType) String() string {
+	switch j {
+	case InnerJoin:
+		return "INNER JOIN"
+	case LeftJoin:
+		return "OUTER JOIN"
+	case RightJoin:
+		return "RIGHT JOIN"
+	case OuterJoin:
+		return "FULL OUTER JOIN"
+	default:
+		return ""
+	}
+}
+
+func (ss *selectStatement) Join(jt JoinType, table string, localOn string, remoteOn string) *selectStatement {
+	ss.joins = append(ss.joins, Join{
+		JoinType:  jt,
+		tableName: table,
+		localOn:   localOn,
+		remoteOn:  remoteOn,
+	})
+	return ss
+}
+
 func (ss *selectStatement) Limit(limit int) *selectStatement {
 	ss.limit = limit
 	return ss
@@ -54,6 +96,10 @@ func (ss *selectStatement) buildQuery() string {
 
 	tableStr := strings.Join(ss.fromTables, ", ")
 	q += fmt.Sprintf("FROM %s\n", tableStr)
+
+	for _, j := range ss.joins {
+		q += fmt.Sprintf("%s %s ON %s = %s\n", j.JoinType.String(), j.tableName, j.localOn, j.remoteOn)
+	}
 
 	if ss.limit != 0 {
 		q += fmt.Sprintf("LIMIT %v\n", ss.limit)
