@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"time"
 )
 
 type Statement interface {
@@ -94,8 +95,12 @@ func reflectStruct(structType reflect.Type, values [][]interface{}) reflect.Valu
 					if v, ok := val.(bool); ok {
 						fieldValue.SetBool(v)
 					}
+				case reflect.Struct:
+					if v, ok := val.(time.Time); ok {
+						fieldValue.Set(reflect.ValueOf(v))
+					}
 				default:
-					log.Println("field value type not supported ", fieldValue.Kind())
+					log.Println("field value type not supported", fieldValue.Kind())
 				}
 
 			}
