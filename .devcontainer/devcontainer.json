@@ -1,0 +1,6 @@
+{
+  "name": "Go Db",
+  "image": "mcr.microsoft.com/devcontainers/go:latest",
+  "customizations": {
+  }
+}
