@@ -13,6 +13,7 @@ type selectStatement struct {
 	columns    []string
 	fromTables []string
 	joins      []Join
+	orderBy    []string
 	limit      int
 	offset     int
 }
@@ -80,6 +81,11 @@ func (ss *selectStatement) Join(jt JoinType, table string, localOn string, remot
 	return ss
 }
 
+func (ss *selectStatement) OrderBy(columns ...string) *selectStatement {
+	ss.orderBy = append(ss.orderBy, columns...)
+	return ss
+}
+
 func (ss *selectStatement) Limit(limit int) *selectStatement {
 	ss.limit = limit
 	return ss
@@ -101,6 +107,9 @@ func (ss *selectStatement) buildQuery() string {
 	for _, j := range ss.joins {
 		q += fmt.Sprintf("%s %s ON %s.%s = %s.%s\n", j.JoinType.String(), j.tableName, j.tableName, j.localOn, ss.fromTables[0], j.remoteOn)
 	}
+
+	orderStr := strings.Join(ss.orderBy, ",\n")
+	q += fmt.Sprintf("ORDER BY %s\n", orderStr)
 
 	if ss.limit != 0 {
 		q += fmt.Sprintf("LIMIT %v\n", ss.limit)
