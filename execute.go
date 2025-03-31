@@ -83,6 +83,10 @@ func reflectStruct(structType reflect.Type, values [][]interface{}) reflect.Valu
 
 			if fieldValue.Kind() != reflect.Invalid {
 				switch field.Type.Kind() {
+				case reflect.Float64:
+					if v, ok := val.(float64); ok {
+						fieldValue.SetFloat(v)
+					}
 				case reflect.Int:
 					if v, ok := val.(int64); ok {
 						fieldValue.SetInt(v)
