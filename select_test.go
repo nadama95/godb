@@ -22,7 +22,7 @@ func TestSelect(t *testing.T) {
 		t.Errorf("error loading dotenv variables %s", err)
 	}
 
-	db, err := Open(postgresql.Adapter, os.Getenv("DATABASE_URL"))
+	db, err := Open(postgresql.Adapter, os.Getenv("DATABASE_URL"), &Config{printQueries: true})
 
 	if err != nil {
 		t.Errorf("error opening database %s", err)
@@ -34,7 +34,8 @@ func TestSelect(t *testing.T) {
 	q := db.Select()
 	q = q.From("ipam_ipaddress")
 	q = q.Columns("id::int", "ipaddress::text", "updated_at")
-	q = q.Limit(1).Offset(10)
+	q = q.Where("ipaddress::text", Like, "10.0.36.%")
+	q = q.Limit(1).Offset(1)
 
 	record := TestSelectRecord{}
 

@@ -12,6 +12,7 @@ type selectStatement struct {
 	columns    []string
 	fromTables []string
 	joins      []Join
+	where      []Where
 	orderBy    []string
 	limit      int
 	offset     int
@@ -80,6 +81,11 @@ func (ss *selectStatement) Join(jt JoinType, table string, localOn string, remot
 	return ss
 }
 
+func (ss *selectStatement) Where(field string, comparator Comparator, value string) *selectStatement {
+	ss.where = append(ss.where, Where{field: field, comparator: comparator, value: value})
+	return ss
+}
+
 func (ss *selectStatement) OrderBy(columns ...string) *selectStatement {
 	ss.orderBy = append(ss.orderBy, columns...)
 	return ss
@@ -107,6 +113,16 @@ func (ss *selectStatement) buildQuery() string {
 		q += fmt.Sprintf("%s %s ON %s.%s = %s.%s\n", j.JoinType.String(), j.tableName, j.tableName, j.localOn, ss.fromTables[0], j.remoteOn)
 	}
 
+	if len(ss.where) > 0 {
+		whereStrs := []string{}
+		for _, w := range ss.where {
+			whereStrs = append(whereStrs, w.String())
+		}
+
+		whereStr := strings.Join(whereStrs, "\n\t&&")
+		q += fmt.Sprintf("WHERE %s\n", whereStr)
+	}
+
 	if len(ss.orderBy) > 0 {
 		orderStr := strings.Join(ss.orderBy, ",\n")
 		q += fmt.Sprintf("ORDER BY %s\n", orderStr)
@@ -118,6 +134,10 @@ func (ss *selectStatement) buildQuery() string {
 
 	if ss.offset != 0 {
 		q += fmt.Sprintf("OFFSET %v\n", ss.offset)
+	}
+
+	if ss.db.config.printQueries {
+		fmt.Println(q)
 	}
 
 	return q

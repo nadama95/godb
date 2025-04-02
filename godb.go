@@ -9,23 +9,29 @@ import (
 type DB struct {
 	adapter adapters.Adapter
 	sql     *sql.DB
+	config  *Config
 }
 
-func initalize(adapter adapters.Adapter, sql *sql.DB) *DB {
+type Config struct {
+	printQueries bool
+}
+
+func initalize(adapter adapters.Adapter, sql *sql.DB, config *Config) *DB {
 	return &DB{
 		adapter: adapter,
 		sql:     sql,
+		config:  config,
 	}
 }
 
-func Open(adapter adapters.Adapter, dataSourceName string) (*DB, error) {
+func Open(adapter adapters.Adapter, dataSourceName string, config *Config) (*DB, error) {
 	db, err := sql.Open(adapter.DriverName(), dataSourceName)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return initalize(adapter, db), nil
+	return initalize(adapter, db, config), nil
 }
 
 func (db *DB) Ping() bool {
