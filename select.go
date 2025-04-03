@@ -119,7 +119,7 @@ func (ss *selectStatement) buildQuery() string {
 			whereStrs = append(whereStrs, w.String())
 		}
 
-		whereStr := strings.Join(whereStrs, "\n\t&&")
+		whereStr := strings.Join(whereStrs, "\n\tAND")
 		q += fmt.Sprintf("WHERE %s\n", whereStr)
 	}
 
