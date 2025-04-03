@@ -13,7 +13,7 @@ type DB struct {
 }
 
 type Config struct {
-	printQueries bool
+	PrintQueries bool
 }
 
 func initalize(adapter adapters.Adapter, sql *sql.DB, config *Config) *DB {
