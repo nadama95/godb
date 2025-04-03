@@ -136,7 +136,7 @@ func (ss *selectStatement) buildQuery() string {
 		q += fmt.Sprintf("OFFSET %v\n", ss.offset)
 	}
 
-	if ss.db.config.printQueries {
+	if ss.db.config.PrintQueries {
 		fmt.Println(q)
 	}
 

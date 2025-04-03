@@ -22,7 +22,7 @@ func TestSelect(t *testing.T) {
 		t.Errorf("error loading dotenv variables %s", err)
 	}
 
-	db, err := Open(postgresql.Adapter, os.Getenv("DATABASE_URL"), &Config{printQueries: true})
+	db, err := Open(postgresql.Adapter, os.Getenv("DATABASE_URL"), &Config{PrintQueries: true})
 
 	if err != nil {
 		t.Errorf("error opening database %s", err)
